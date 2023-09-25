@@ -1,0 +1,11 @@
+# SPDX-FileCopyrightText: 2023-present Fynn Freyer <fynn.freyer@googlemail.com>
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+"""
+
+"""
+
+from ai_chatter.apps.base import *
+from ai_chatter.apps.chat import *
+from ai_chatter.apps.howto import *

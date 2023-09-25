@@ -1,0 +1,7 @@
+{
+  "api_key": "test",
+  "session_settings": {
+    "model": "gpt-4",
+    "session_warn_size": -1
+  }
+}
