@@ -33,7 +33,9 @@ def summarize():
     # args = Settings.parse_args(parser)
     # url = args.url
 
-    app = SummarizePage("https://stackoverflow.com/questions/3711856/how-to-remove-empty-lines-with-or-without-whitespace-in-python")
+    app = SummarizePage(
+        "https://stackoverflow.com/questions/3711856/how-to-remove-empty-lines-with-or-without-whitespace-in-python"
+    )
     app.start()
 
 

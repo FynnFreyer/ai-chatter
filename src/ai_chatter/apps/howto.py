@@ -15,6 +15,8 @@ from ai_chatter.apps.base import Application
 from ai_chatter.db import BehaviorDirective
 from ai_chatter.utils.config import Settings
 
+__all__ = ["ShellHowTo"]
+
 
 @dataclass
 class EnvData:

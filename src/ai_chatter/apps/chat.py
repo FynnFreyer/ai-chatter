@@ -8,6 +8,8 @@
 
 from ai_chatter.apps.base import Application
 
+__all__ = ["Chatter"]
+
 
 class Chatter(Application):
     """A simple AI chatbot on your CLI."""

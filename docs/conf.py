@@ -7,7 +7,7 @@ from ai_chatter.__about__ import __app_name__, __author__, __version__
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = __app_name__
-copyright = f'2023-present, {__author__}'
+copyright = f"2023-present, {__author__}"  # noqa: A001
 author = __author__
 release = __version__
 
@@ -22,8 +22,8 @@ extensions = [
     "sphinxcontrib_relativeinclude",
 ]
 
-templates_path = ['_templates']
-exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
+templates_path = ["_templates"]
+exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
 # -- Options for output ------------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output

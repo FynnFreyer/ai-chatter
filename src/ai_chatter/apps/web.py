@@ -6,17 +6,15 @@
 This module defines the base class for ai_chatter applications.
 """
 
-from dataclasses import dataclass
-
 try:
     from bs4 import BeautifulSoup
-    from requests_html import HTMLSession
     from markdownify import MarkdownConverter, markdownify
+    from requests_html import HTMLSession
 except ImportError as e:
     from ai_chatter.__about__ import __app_name__
 
-    raise ImportError(f"Please install {__app_name__} with the optional web dependencies to enable this module. "
-                      f"You can do so, by running `pip install {__app_name__}[web]` from the command line.") from e
+    msg = f"Please install {__app_name__} with the optional web dependencies to enable this module. You can do so, by running `pip install {__app_name__}[web]` from the command line."
+    raise ImportError(msg) from e
 
 from ai_chatter.apps.base import Application
 
@@ -42,7 +40,7 @@ class SummarizePage(Application):
             html = response.html.raw_html
 
         # cleanup content
-        soup = BeautifulSoup(html, 'html.parser')
+        soup = BeautifulSoup(html, "html.parser")
         main = soup.find("main")
         if main is not None:
             soup = main
@@ -66,4 +64,4 @@ class SummarizePage(Application):
             was_empty = is_empty
 
         markdown = "\n".join(lines)
-        print(markdown)
+        print(markdown)  # noqa
