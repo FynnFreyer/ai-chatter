@@ -81,6 +81,17 @@ cov = [
     "test-cov",
     "cov-report",
 ]
+release = [
+    # check for staged or unstaged changes (abort if any)
+    "git diff --exit-code",
+    "git diff --cached --exit-code",
+    # if none, we bump version, and commit
+    "hatch version {args:patch}",
+    'git commit -am "build: bump version to $(hatch version) for release"',
+    # now generate a tag, and push to origin
+    "git tag $(hatch version)",
+    "git push origin --tags",
+]
 
 [[tool.hatch.envs.all.matrix]]
 python = ["3.8", "3.9", "3.10", "3.11"]
