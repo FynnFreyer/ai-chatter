@@ -16,7 +16,7 @@ from ai_chatter.utils.config import Settings
 
 def main():
     """The main entrypoint into the application."""
-    settings = Settings.from_args()
+    settings = Settings.load()
     app = Chatter(settings)
     app.start()
 
@@ -40,5 +40,5 @@ def summarize():
 
 
 if __name__ == "__main__":
-    summarize()
-    # main()
+    # summarize()
+    main()

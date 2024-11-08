@@ -28,7 +28,7 @@ __all__ = ["Application"]
 @dataclass
 class Application(ABC):
     """
-    The base class for ai_chatter applications. Subclass this, override the :meth:`run` method and then start your
+    The base class for ``ai_chatter`` applications. Subclass this, override the :meth:`run` method and then start your
     application with the :meth:`start` method.
     """
 

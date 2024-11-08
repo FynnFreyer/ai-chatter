@@ -59,9 +59,9 @@ class SessionSettings(BaseSettings):
 class Settings(BaseSettings):
     """Settings for the application. Can be set via env-vars or a config file."""
 
-    model_config = SettingsConfigDict(env_prefix=f"{__app_name__}_")
+    model_config = SettingsConfigDict(env_prefix=f"{__app_name__}_", extra="ignore")
 
-    api_key: str = ""
+    api_key: Optional[str] = None
     """The API key to use."""
 
     data_dir: DirectoryPath | NewPath = Path(platformdirs.user_data_dir(__app_name__, __author__))
@@ -75,40 +75,6 @@ class Settings(BaseSettings):
 
     persist: bool = True
     """Whether the conversation should be saved."""
-
-    @classmethod
-    def load(cls, file: Optional[str | Path] = None):
-        """
-        Load settings from the standard location or env vars. Location depends on the platform, e.g.,
-        "${XDG_CONFIG_HOME}/ai_chatter/config.json" on Linux.
-
-        :param file: Optionally, a configuration file to read from. Defaults to "config.json" in the current directory.
-        :raise JSONDecodeError: If a config file contains invalid JSON.
-        :raise RuntimeError: If no API key was provided.
-        :return: A settings instance.
-        """
-
-        file = Path(file).resolve() if file is not None else Path("config.json").resolve()
-
-        dirs = PlatformDirs(appname=__app_name__, appauthor=__author__)
-        config_paths = [dirs.site_config_path / "config.json", dirs.user_config_path / "config.json", file]
-
-        data_dir = dirs.user_data_path
-        config = Settings(data_dir=data_dir).model_dump()
-
-        for config_path in config_paths:
-            _logger.info(f"{cls.__name__}: Trying to load config from {config_path}.")
-            if config_path.exists():
-                _logger.info(f"{cls.__name__}: Found file at {config_path}.")
-                try:
-                    with config_path.open() as config_file:
-                        config |= load(config_file)
-                except JSONDecodeError as e:
-                    msg = f"{cls.__name__}: Invalid JSON in config file at {config_path}."
-                    _logger.error(msg)
-                    raise JSONDecodeError(msg, e.doc, e.pos) from e
-
-        return cls(**config)
 
     @staticmethod
     def get_parser(name: str = __app_name__, description: str = __description__) -> ArgumentParser:
@@ -137,6 +103,57 @@ class Settings(BaseSettings):
         return parser
 
     @classmethod
+    def load(cls):
+        """Load Settings"""
+        config_values = cls.from_file().model_dump(exclude_defaults=True)
+        argument_values = cls.from_args().model_dump(exclude_defaults=True)
+        merged_values = {
+            **config_values,
+            **argument_values,
+        }
+        settings = cls(**merged_values)
+        assert settings._has_api_key(), "Please provide an API-Key!"
+        return settings
+
+    def _has_api_key(self) -> bool:
+        """Check, whether API-key is there."""
+        return bool(self.api_key)
+
+    @classmethod
+    def from_file(cls, file: Optional[str | Path] = None) -> "Settings":
+        """
+        Load settings from the standard location or env vars. Location depends on the platform, e.g.,
+        "${XDG_CONFIG_HOME}/ai_chatter/config.json" on Linux.
+
+        :param file: Optionally, a configuration file to read from. Defaults to "config.json" in the current directory.
+        :raise JSONDecodeError: If a config file contains invalid JSON.
+        :raise RuntimeError: If no API key was provided.
+        :return: A settings instance.
+        """
+        file = file or Path("config.json")
+        file = Path(file).resolve()
+
+        dirs = PlatformDirs(appname=__app_name__, appauthor=__author__)
+        config_paths = [dirs.site_config_path / "config.json", dirs.user_config_path / "config.json", file]
+
+        data_dir = dirs.user_data_path
+        config = Settings(data_dir=data_dir).model_dump()
+
+        for config_path in config_paths:
+            _logger.info(f"{cls.__name__}: Trying to load config from {config_path}.")
+            if config_path.exists():
+                _logger.info(f"{cls.__name__}: Found file at {config_path}.")
+                try:
+                    with config_path.open() as config_file:
+                        config |= load(config_file)
+                except JSONDecodeError as e:
+                    msg = f"{cls.__name__}: Invalid JSON in config file at {config_path}."
+                    _logger.error(msg)
+                    raise JSONDecodeError(msg, e.doc, e.pos) from e
+
+        return cls(**config)
+
+    @classmethod
     def parse_args(cls, parser: Optional[ArgumentParser] = None, args: Optional[tuple[str, ...]] = None) -> Namespace:
         """Parse arguments."""
         if args is None:
@@ -151,14 +168,9 @@ class Settings(BaseSettings):
         return parsed_args
 
     @classmethod
-    def from_args(cls, args: Optional[Namespace] = None):
+    def from_args(cls, args: Optional[Namespace] = None) -> "Settings":
         """Augment the settings object provided by :meth:`load` with command line parameters."""
         if args is None:
             args = cls.parse_args()
-        settings = cls.load(args.config)
 
-        settings.verbosity = args.verbosity
-        if args.api_key is not None:
-            settings.api_key = args.api_key
-
-        return settings
+        return cls(**vars(args))

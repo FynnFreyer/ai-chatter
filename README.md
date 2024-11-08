@@ -6,9 +6,50 @@
 ## About
 
 AI is pretty cool, but a lot of fuss around it is just chatter.
-This package tries to provide a toolkit to easily implement basic applications using ChatGPT, so you can get your hands dirty, and see whether you can do something useful with it.
+This package tries to provide a toolkit to easily implement basic applications using ChatGPT,
+so you can get your hands dirty, and see whether you can do something useful with it.
 
-It automatically takes care of some issues around interacting with a chatbot, like settings and session management, data persistence, communication, and gluing it together.
+It automatically takes care of some issues around interacting with a chatbot,
+like settings and session management, data persistence, communication, and gluing it together.
+
+## Project Goals
+
+Features für Sprachlehrer
+
+- Individualisierter Unterricht
+- Lernerfolgsübersicht
+- Austauschbares Backend
+  - online/lokal
+  - verschiedene Anbieter
+- Fehlerkorrektur
+  - Was ist falsch?
+  - Wie wäre es richtig?
+- Vokabeln lernen
+- Grammatik lernen
+
+## Architektur
+
+- Sprecher-Profile
+  - Name
+  - Level (A1-C2)
+    - Angabe durch Nutzer
+    - Einschätzung durch Programm
+  - Hobbies (ggf. für Individualisierung?)
+  - Lernerfolg
+- Fehler
+  - Verschiedene Arten von Fehlern, z.B.
+    - Falsche Freunde,
+    - Grammatik,
+    - Orthographie,
+    - ...
+  - Fehlerhäufigkeiten (der verschiedenen Arten) könnten erhoben werden, um
+    - das Sprecherlevel einzuschätzen, oder
+    - den Unterricht zu individualisieren.
+- Vokabeln lernen
+- Knowledge-Base Artikel
+  - Halten das "Gedächtnis" der AI
+  - Werden genutzt, um Systemprompt zu generieren
+  - Müssen geupdated werden
 
 ## Installation
 
